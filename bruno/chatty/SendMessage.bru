@@ -1,0 +1,20 @@
+meta {
+  name: SendMessage
+  type: grpc
+  seq: 1
+}
+
+grpc {
+  url: http://localhost:51001
+  method: /message.Messages/SendMessage
+  body: grpc
+  auth: inherit
+  methodType: unary
+}
+
+body:grpc {
+  name: message 1
+  content: '''
+    {"sender_id": "test", "receiver_id": "test", "content": "what"}
+  '''
+}
