@@ -15,7 +15,7 @@ type messageServer struct {
 	pb.UnimplementedMessagesServer
 }
 
-func NewMessageServer() (*messageServer) {
+func NewMessageServer() *messageServer {
 	s := &messageServer{}
 	return s
 }

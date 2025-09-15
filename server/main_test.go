@@ -14,7 +14,6 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
-
 func newMessageServerClient() (pb.MessagesClient, func()) {
 	lis := bufconn.Listen(1024 * 1024)
 	grpcServer := grpc.NewServer()
@@ -24,7 +23,7 @@ func newMessageServerClient() (pb.MessagesClient, func()) {
 			log.Fatalf("Failed to server: %v", err)
 		}
 	}()
-	dialServer := func (context.Context, string) (net.Conn, error) {
+	dialServer := func(context.Context, string) (net.Conn, error) {
 		return lis.Dial()
 	}
 

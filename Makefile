@@ -19,3 +19,7 @@ run: build
 test: build
 	go test -coverprofile=coverage.out -v ./server/...
 	go tool cover -func=coverage.out
+
+format:
+	gofmt -w .
+	goimports -w .
