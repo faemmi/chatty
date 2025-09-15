@@ -11,11 +11,16 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type server struct {
+type messageServer struct {
 	pb.UnimplementedMessagesServer
 }
 
-func (s *server) SendMessage(_ context.Context, request *pb.SendMessageRequest) (*pb.SendMessageResponse, error) {
+func NewMessageServer() (*messageServer) {
+	s := &messageServer{}
+	return s
+}
+
+func (s *messageServer) SendMessage(_ context.Context, request *pb.SendMessageRequest) (*pb.SendMessageResponse, error) {
 	log.Printf("Received: %v", protojson.Format(request))
 	return &pb.SendMessageResponse{Success: true, MessageId: "test-id", Error: ""}, nil
 }
@@ -25,11 +30,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
-	grpcServer := grpc.NewServer()
-	pb.RegisterMessagesServer(grpcServer, &server{})
-	reflection.Register(grpcServer)
+	server := grpc.NewServer()
+	pb.RegisterMessagesServer(server, &messageServer{})
+	reflection.Register(server)
 	log.Printf("Server listening at %v", lis.Addr())
-	if err := grpcServer.Serve(lis); err != nil {
+	if err := server.Serve(lis); err != nil {
 		log.Fatalf("Failed to server: %v", err)
 	}
 }
