@@ -31,4 +31,3 @@ message SendMessageResponse {
 message GetMessagesRequest {
 	string user_id = 1;
 }
-
