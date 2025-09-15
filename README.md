@@ -1,7 +1,5 @@
 # chatty
 
-![Coverage](https://codecov.io/gh/faemmi/chatty/branch/main/graph/badge.svg)
-
 ## Tools
 
 - API: gRPC
