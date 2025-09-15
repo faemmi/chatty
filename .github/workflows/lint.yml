@@ -77,10 +77,3 @@ jobs:
 
       - name: Run Tests with Coverage
         run: make test
-
-      - name: Upload Coverage Report
-        uses: codecov/codecov-action@v4
-        with:
-          file: coverage.out
-          flags: unittests
-          fail_ci_if_error: true
