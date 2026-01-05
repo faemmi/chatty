@@ -1,0 +1,10 @@
+database:
+  url: "mongodb://localhost:27017"
+  dbname: "MongoDb"
+  collection: "messages"
+
+server:
+  port: "51001"
+
+app:
+  name: "chatty"
