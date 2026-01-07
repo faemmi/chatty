@@ -18,7 +18,7 @@ run: build
 	go run server/main.go
 
 test: build
-	go test -coverprofile=coverage.out -v ./server/...
+	go test -coverprofile=coverage.out -v ./...
 	go tool cover -func=coverage.out
 
 format:

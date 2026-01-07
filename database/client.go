@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func Connect(config utils.Config) (*mongo.Client, *mongo.Collection, func()) {
+func Connect(config utils.Config) (*mongo.Client, *mongo.Database, func()) {
 // Uses the SetServerAPIOptions() method to set the Stable API version to 1
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	// Defines the options for the MongoDB client
@@ -53,7 +53,7 @@ func Connect(config utils.Config) (*mongo.Client, *mongo.Collection, func()) {
 	}
 	log.Printf("Pinged your deployment. You successfully connected to MongoDB!")
 
-	coll := client.Database(config.Database.DbName).Collection(config.Database.Collection)
+	database := client.Database(config.Database.DbName)
 
-	return client, coll, disconnect
+	return client, database, disconnect
 }

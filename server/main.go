@@ -21,6 +21,7 @@ import (
 
 type messageServer struct {
 	pb.UnimplementedMessagesServer
+	Config utils.Config
 }
 
 func NewMessageServer() *messageServer {
@@ -31,11 +32,13 @@ func NewMessageServer() *messageServer {
 func (s *messageServer) SendMessage(ctx context.Context, request *pb.SendMessageRequest) (*pb.SendMessageResponse, error) {
 	log.Printf("Received: %v", protojson.Format(request))
 
-	config := utils.ReadConfig()
-	_, messages, disconnect := database.Connect(config)
+	_, db, disconnect := database.Connect(s.Config)
 	defer disconnect()
 
-	id, err := saveMessage(ctx, messages, request)
+	conversation := database.GetConversation(request.SenderId, request.ReceiverId, db)
+	// TODO: Store conversation hash in UserConversationMap collection
+
+	id, err := saveMessage(ctx, conversation, request)
 
 	if err != nil {
 		return &pb.SendMessageResponse{Success: false, MessageId: "", Error: fmt.Sprintf("%v", err)}, nil
@@ -44,6 +47,20 @@ func (s *messageServer) SendMessage(ctx context.Context, request *pb.SendMessage
 
 	return &pb.SendMessageResponse{Success: true, MessageId: id.String(), Error: ""}, nil
 }
+
+func (s *messageServer) GetMessages(request *pb.GetMessagesRequest, stream grpc.ServerStreamingServer[pb.Message]) error {
+	// _, db, disconnect := database.Connect(s.Config)
+	// defer disconnect()
+
+	// conversation := database.GetConversation(request.SenderId, request.ReceiverId, db)
+	// TODO: Maybe make user-conversation map (collection) to store all hashes (conversations, i.e. Collections of a user)
+	// then use 
+	// filter = bson.M{"receiverId": request.UserId}
+	// UserConversationMap.Find(ctx, filter)
+	return errors.New("method GetMessages not implemented")
+	
+}
+
 
 func saveMessage(ctx context.Context, messages *mongo.Collection, request *pb.SendMessageRequest) (uuid.UUID, error) {
 	id, err := uuid.NewV7()
@@ -98,7 +115,8 @@ func main() {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 	server := grpc.NewServer()
-	pb.RegisterMessagesServer(server, &messageServer{})
+	messageServer := &messageServer{Config: config}
+	pb.RegisterMessagesServer(server, messageServer)
 	reflection.Register(server)
 	log.Printf("Server listening at %v", lis.Addr())
 	if err := server.Serve(lis); err != nil {
