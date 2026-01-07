@@ -32,7 +32,8 @@ func (s *messageServer) SendMessage(ctx context.Context, request *pb.SendMessage
 	log.Printf("Received: %v", protojson.Format(request))
 
 	config := utils.ReadConfig()
-	messages := database.Connect(config)
+	_, messages, disconnect := database.Connect(config)
+	defer disconnect()
 
 	id, err := saveMessage(ctx, messages, request)
 

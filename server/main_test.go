@@ -2,6 +2,7 @@ package main_test
 
 import (
 	pb "chatty/protos/message"
+	"chatty/utils"
 	"context"
 	"log"
 	"net"
@@ -9,6 +10,7 @@ import (
 
 	server "chatty/server"
 
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
@@ -61,12 +63,9 @@ func TestSendMessage(t *testing.T) {
 	}
 
 	// Assert the response
-	expected := &pb.SendMessageResponse{
-		Success:   true,
-		MessageId: "test-message-id",
-		Error:     "",
-	}
 	if res.Success != true {
-		t.Errorf("Expected response %q, got %q", expected, res.Error)
+		t.Errorf("Expected successful response, got %q", res.Error)
 	}
+
+	assert.Equal(t, utils.IsValidUUID(res.MessageId), true, "MessageId is not a valid UUID")
 }
